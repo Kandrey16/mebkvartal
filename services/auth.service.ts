@@ -1,4 +1,16 @@
 class AuthService {
+  async signUp(data: {email: string, password: string}) {
+    const res = await fetch('/api/auth/signUp', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    })
+    if (!res.ok) throw new Error('Неверный email или пароль')
+
+    return res.json()
+  }
+  
   async signIn(data: { email: string; password: string }) {
     const res = await fetch('/api/auth/signIn', {
       method: 'POST',
@@ -6,7 +18,6 @@ class AuthService {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     })
-
     if (!res.ok) throw new Error('Неверный email или пароль')
 
     return res.json()
@@ -15,7 +26,7 @@ class AuthService {
   async refresh() {
     const res = await fetch('/api/auth/refresh', {
       method: 'POST',
-      credentials: 'include',
+      credentials: 'include'
     })
 
     if (!res.ok) {

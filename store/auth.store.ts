@@ -5,10 +5,10 @@ type User = {
   id: string
   email: string
   role: string
-  name: string
-  surname: string
-  imageUrl: string
-  phoneNumber: string
+  name?: string
+  surname?: string
+  imageUrl?: string
+  phoneNumber?: string
 }
 
 type AuthState = {
@@ -16,12 +16,11 @@ type AuthState = {
   user: User | null
   isAuth: boolean
   isLoading: boolean
-  okay: string | null
 
+  registration: (toke: string, user: User) => void
   login: (token: string, user: User) => void
   logout: () => void
   setLoading: (loading: boolean) => void
-  setOkay: (okay: string) => void
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -32,6 +31,14 @@ export const useAuthStore = create<AuthState>()(
       isAuth: false,
       isLoading: true,
       okay: null,
+
+      registration: (token, user) =>
+        set({
+          accessToken: token,
+          user: user,
+          isAuth: true,
+          isLoading: false
+        }),
 
       login: (token, user) =>
         set({
@@ -52,9 +59,7 @@ export const useAuthStore = create<AuthState>()(
       setLoading: loading =>
         set({
           isLoading: loading
-        }),
-
-      setOkay: okay => set({ okay: okay })
+        })
     }),
     {
       name: 'auth-storage'

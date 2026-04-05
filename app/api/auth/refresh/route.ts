@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth/refresh`, {
     method: 'POST',
     headers: {
-      cookie,
+      Cookie: cookie,
       'X-Device-ID': deviceId,
       'User-Agent': userAgent
     }
@@ -25,10 +25,10 @@ export async function POST(req: NextRequest) {
 
   response.cookies.set('refreshToken', data.refreshToken, {
     httpOnly: true,
-    secure: false,
-    //secure: process.env.NODE_ENV === 'production',
+    secure: process.env.NODE_ENV === 'production',
     sameSite: 'strict',
-    maxAge: 30 * 24 * 60 * 60
+    maxAge: 30 * 24 * 60 * 60,
+    path: '/'
   })
 
   return response

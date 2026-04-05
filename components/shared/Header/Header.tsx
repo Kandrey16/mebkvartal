@@ -1,4 +1,4 @@
-import Profile from '@/components/features/Header/Avatar'
+import Profile from '@/components/features/Header/Profile'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Heart, Search, ShoppingCart, TextAlignStart } from 'lucide-react'

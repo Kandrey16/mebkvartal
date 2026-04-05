@@ -10,14 +10,18 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
+import { authService } from '@/services/auth.service'
 import { useAuthStore } from '@/store/auth.store'
+import { useRouter } from 'next/navigation'
 
 export default function Profile() {
-  const { isAuth, okay, setOkay } = useAuthStore()
+  const { isAuth } = useAuthStore()
+  const route = useRouter()
+  const logout = authService.logout
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
+      <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
           size="icon"
@@ -32,34 +36,38 @@ export default function Profile() {
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-32">
-        <DropdownMenuGroup>
-          <DropdownMenuItem>Профиль</DropdownMenuItem>
+      {isAuth ? (
+        <DropdownMenuContent>
+          <DropdownMenuGroup>
+            <DropdownMenuItem
+              onClick={() => {
+                console.log(isAuth)
+              }}
+            >
+              Профиль
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <DropdownMenuItem
+              onClick={() => logout()}
+              variant="destructive"
+            >
+              Выход
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+        </DropdownMenuContent>
+      ) : (
+        <DropdownMenuContent>
           <DropdownMenuItem
             onClick={() => {
-              console.log(isAuth)
+              route.push('/auth/signIn')
             }}
           >
             Войти
           </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => {
-              setOkay('okay')
-            }}
-          >
-            Профиль
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <DropdownMenuItem
-            onClick={() => console.log(okay)}
-            variant="destructive"
-          >
-            Выход
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-      </DropdownMenuContent>
+        </DropdownMenuContent>
+      )}
     </DropdownMenu>
   )
 }

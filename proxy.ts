@@ -4,9 +4,7 @@ import type { NextRequest } from 'next/server'
 export function proxy(request: NextRequest) {
   const response = NextResponse.next()
 
-  const deviceId = request.cookies.get('x-device-id')
-
-  if (!deviceId) {
+  if (!request.cookies.get('x-device-id')) {
     response.cookies.set('x-device-id', crypto.randomUUID(), {
       httpOnly: false,
       maxAge: 60 * 60 * 24 * 365,

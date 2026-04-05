@@ -7,8 +7,9 @@ import { LoginFormData, loginSchema } from '@/schema/login.schema'
 import { authService } from '@/services/auth.service'
 import { Button } from '@/components/ui/button'
 import { useAuthStore } from '@/store/auth.store'
+import Link from 'next/link'
 
-export function LoginForm() {
+export function SignInForm() {
   const router = useRouter()
   const { login } = useAuthStore()
   const {
@@ -63,6 +64,12 @@ export function LoginForm() {
       >
         Войти
       </Button>
+      <p>
+        Нет аккаунта?{' '}
+        <Link href="/auth/signUp">
+          <span>Регистрация</span>
+        </Link>
+      </p>
     </form>
   )
 }

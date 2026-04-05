@@ -6,7 +6,7 @@ export async function POST(req: NextRequest) {
   const deviceId = req.cookies.get('x-device-id')?.value || ''
   const agent = userAgent(req)
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth/signIn`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth/signUp`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -20,7 +20,10 @@ export async function POST(req: NextRequest) {
 
   if (!res.ok) return NextResponse.json(data, { status: res.status })
 
-  const response = NextResponse.json({ accessToken: data.accessToken })
+  const response = NextResponse.json({
+    accessToken: data.accessToken,
+    user: data.user
+  })
 
   response.cookies.set('refreshToken', data.refreshToken, {
     httpOnly: true,
