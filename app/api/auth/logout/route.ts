@@ -1,23 +1,34 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { apiService } from '@/services/api.service'
+import { NextRequest } from 'next/server'
 
 export async function POST(req: NextRequest) {
-  const cookieHeader = req.headers.get('cookie') || ''
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth/logout`, {
+  return await apiService.handleAuthRequest(req, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      cookie: cookieHeader
-    },
+    path: '/auth/logout'
   })
-
-  const response = new NextResponse(await res.text(), {
-    status: res.status
-  })
-
-  const setCookie = res.headers.get('set-cookie')
-  if (setCookie) {
-    response.headers.set('set-cookie', setCookie)
-  }
-
-  return response
 }
+
+// import axios from 'axios'
+// import { NextRequest, NextResponse } from 'next/server'
+// export async function POST(req: NextRequest) {
+//   const cookieHeader = req.headers.get('cookie') || ''
+
+//   const res = await axios.post(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth/logout`, {
+//     headers: {
+//       'Content-Type': 'application/json',
+//       cookie: cookieHeader
+//     },
+//     validateStatus: () => true
+//   })
+
+//   const response = new NextResponse(res.data(), {
+//     status: res.status
+//   })
+
+//   const setCookie = res.headers['set-cookie']
+//   if (setCookie) {
+//     response.headers.set('set-cookie', setCookie.join(','))
+//   }
+
+//   return response
+// }

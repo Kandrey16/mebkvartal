@@ -2,14 +2,19 @@
 
 import { authService } from '@/services/auth.service'
 import { useAuthStore } from '@/store/auth.store'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = useAuthStore(state => state.login)
   const logout = useAuthStore(state => state.logout)
   const setLoading = useAuthStore(state => state.setLoading)
 
+  const initialized = useRef(false)
+
   useEffect(() => {
+    if (initialized.current) return
+    initialized.current = true
+    
     const refreshAuth = async () => {
       try {
         const data = await authService.refresh()
@@ -21,7 +26,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     }
     refreshAuth()
-  }, [login, logout, setLoading])
+  }, [])
 
   return children
 }

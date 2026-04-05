@@ -1,37 +1,49 @@
-import { NextRequest, NextResponse, userAgent } from 'next/server'
+import { apiService } from '@/services/api.service'
+import { NextRequest } from 'next/server'
 
 export async function POST(req: NextRequest) {
   const body = await req.json()
 
-  const deviceId = req.cookies.get('x-device-id')?.value || ''
-  const agent = userAgent(req)
-
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth/signUp`, {
+  return await apiService.handleAuthRequest(req, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Device-ID': deviceId,
-      'User-Agent': agent.ua
-    },
-    body: JSON.stringify(body)
+    path: '/auth/signUp',
+    data: body,
+    includeUserInResponse: true
   })
-
-  const data = await res.json()
-
-  if (!res.ok) return NextResponse.json(data, { status: res.status })
-
-  const response = NextResponse.json({
-    accessToken: data.accessToken,
-    user: data.user
-  })
-
-  response.cookies.set('refreshToken', data.refreshToken, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
-    path: '/',
-    maxAge: 30 * 24 * 60 * 60
-  })
-
-  return response
 }
+
+// import axios from 'axios'
+// import { NextRequest, NextResponse, userAgent } from 'next/server'
+
+// export async function POST(req: NextRequest) {
+//   const body = await req.json()
+
+//   const deviceId = req.cookies.get('x-device-id')?.value || ''
+//   const agent = userAgent(req)
+
+//   const res = await axios.post(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth/signUp`, body, {
+//     headers: {
+//       'Content-Type': 'application/json',
+//       'X-Device-ID': deviceId,
+//       'User-Agent': agent.ua
+//     },
+//     validateStatus: () => true
+//   })
+
+//   if (res.status !== 200) return NextResponse.json(res.data, { status: res.status })
+
+//   const response = NextResponse.json({
+//     accessToken: res.data.accessToken,
+//     user: res.data.user
+//   })
+
+//   response.cookies.set('refreshToken', res.data.refreshToken, {
+//     httpOnly: true,
+//     secure: process.env.NODE_ENV === 'production',
+//     sameSite: 'strict',
+//     path: '/',
+//     maxAge: 30 * 24 * 60 * 60
+//   })
+
+//   return response
+// }
