@@ -13,7 +13,7 @@ import {
 import { useAuthStore } from '@/store/auth.store'
 
 export default function Profile() {
-  const { isAuth } = useAuthStore()
+  const { isAuth, okay, setOkay } = useAuthStore()
 
   return (
     <DropdownMenu>
@@ -42,11 +42,22 @@ export default function Profile() {
           >
             Войти
           </DropdownMenuItem>
-          <DropdownMenuItem>Профиль</DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => {
+              setOkay('okay')
+            }}
+          >
+            Профиль
+          </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem variant="destructive">Выход</DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => console.log(okay)}
+            variant="destructive"
+          >
+            Выход
+          </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

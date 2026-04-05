@@ -1,22 +1,11 @@
-'use client'
-
 import Profile from '@/components/features/Header/Avatar'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { authService } from '@/services/auth.service'
 import { Heart, Search, ShoppingCart, TextAlignStart } from 'lucide-react'
 import Link from 'next/link'
 
 export default function Header() {
   
-
-  const handleLogout = async () => {
-    try {
-      await authService.logout()
-    } catch (error) {
-      console.error('Ошибка выхода:', error)
-    }
-  }
   return (
     <header className="border-b w-full border-b-gray-300 bg-white">
       <div className="container mx-auto px-4 md:px-6 lg:px-8">

@@ -1,14 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(req: NextRequest) {
-  const refreshToken = req.cookies.get('refreshToken')?.value
+  const cookie = req.headers.get('cookie') || ''
 
-  if (!refreshToken) return NextResponse.json({ error: 'No refresh token' }, { status: 401 })
+  const deviceId = req.cookies.get('x-device-id')?.value || ''
+  const userAgent = req.cookies.get('user-agent')?.value || ''
+
+  if (!cookie) return NextResponse.json({ error: 'Cookie' }, { status: 401 })
 
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth/refresh`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ refreshToken })
+    headers: {
+      cookie,
+      'X-Device-ID': deviceId,
+      'User-Agent': userAgent
+    }
   })
 
   const data = await res.json()
@@ -20,6 +26,7 @@ export async function POST(req: NextRequest) {
   response.cookies.set('refreshToken', data.refreshToken, {
     httpOnly: true,
     secure: false,
+    //secure: process.env.NODE_ENV === 'production',
     sameSite: 'strict',
     maxAge: 30 * 24 * 60 * 60
   })
