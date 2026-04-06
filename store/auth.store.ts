@@ -1,24 +1,15 @@
+import { IApiUser } from '@/types/api.interface'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
-type User = {
-  id: string
-  email: string
-  role: string
-  name?: string
-  surname?: string
-  imageUrl?: string
-  phoneNumber?: string
-}
-
 type AuthState = {
   accessToken: string | null
-  user: User | null
+  user: IApiUser | null
   isAuth: boolean
   isLoading: boolean
 
-  registration: (toke: string, user: User) => void
-  login: (token: string, user: User) => void
+  registration: (toke: string, user: IApiUser) => void
+  login: (token: string, user: IApiUser) => void
   logout: () => void
   setLoading: (loading: boolean) => void
 }
@@ -30,7 +21,6 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       isAuth: false,
       isLoading: true,
-      okay: null,
 
       registration: (token, user) =>
         set({

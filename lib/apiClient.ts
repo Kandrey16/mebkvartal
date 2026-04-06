@@ -1,48 +1,41 @@
-import { authService } from '@/services/auth.service'
 import { useAuthStore } from '@/store/auth.store'
+import axios from 'axios'
 
-let isRefreshing = false
-let refreshPromise: Promise<any> | null = null
+const $api = axios.create({
+  withCredentials: true,
+  baseURL: process.env.NEXT_PUBLIC_CLIENT_API
+})
 
-export async function apiFetch(url: string, options: RequestInit = {}) {
-  const accessToken = useAuthStore.getState().accessToken
+$api.interceptors.request.use(config => {
+  config.headers.Authorization = `Bearer ${useAuthStore.getState().accessToken}`
+  return config
+})
 
-  const res = await fetch(url, {
-    ...options,
-    headers: {
-      ...(options.headers || {}),
-      Authorization: `Bearer ${accessToken}`
+$api.interceptors.response.use(
+  config => config,
+  async error => {
+    const originalRequest = error.config
+
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true
+
+      try {
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_CLIENT_API}/auth/refresh`, {
+          withCredentials: true
+        })
+
+        useAuthStore.getState().login(res.data.accessToken, res.data.user)
+
+        return $api.request(originalRequest)
+      } catch {
+        console.log('Не авторизован')
+
+        //useAuthStore.getState().logout()
+      }
     }
-  })
 
-  if (res.status !== 401) {
-    return res
+    throw error
   }
+)
 
-  if (!isRefreshing) {
-    isRefreshing = true
-    refreshPromise = authService
-      .refresh()
-      .then(data => {
-        useAuthStore.getState().login(data.accessToken, data.user)
-        return data.accessToken
-      })
-      .catch(() => {
-        useAuthStore.getState().logout()
-        throw new Error('Unauthorized')
-      })
-      .finally(() => {
-        isRefreshing = false
-      })
-  }
-
-  const newAccessToken = await refreshPromise
-
-  return fetch(url, {
-    ...options,
-    headers: {
-      ...(options.headers || {}),
-      Authrozation: `Bearer ${newAccessToken}`
-    }
-  })
-}
+export default $api

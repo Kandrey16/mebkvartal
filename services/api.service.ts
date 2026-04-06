@@ -1,11 +1,16 @@
-import { IApiRequestData } from '@/types/api.interface'
+import { IAuthResponseData } from '@/types/api.interface'
 import axios, { AxiosRequestConfig, Method } from 'axios'
 import { NextRequest, NextResponse, userAgent } from 'next/server'
+
+type AuthResponseBody = {
+  accessToken?: string
+  user?: IAuthResponseData['user']
+}
 
 interface IApiRequestOptions {
   method: Method
   path: string
-  data?: IApiRequestData
+  data?: IAuthResponseData
   headers?: Record<string, string>
   req: NextRequest
 }
@@ -21,7 +26,7 @@ class ApiService {
     const deviceId = req.cookies.get('x-device-id')?.value || ''
     const agent = userAgent(req)
 
-    console.log('🔵 [sendApiRequest] raw cookie header:', req.headers.get('cookie'));
+    console.log('🔵 [sendApiRequest] raw cookie header:', req.headers.get('cookie'))
 
     const requestHeaders: Record<string, string> = {
       'Content-Type': 'application/json',
@@ -33,7 +38,7 @@ class ApiService {
 
     console.log('🔵 [sendApiRequest] headers:', requestHeaders)
     console.log('REFRESH TOKEN (parsed):', req.cookies.get('refreshToken')?.value)
-    
+
     const config: AxiosRequestConfig = {
       method,
       url: `${API_ENDPOINT}${path}`,
@@ -69,7 +74,7 @@ class ApiService {
     options: {
       method: Method
       path: string
-      data?: IApiRequestData
+      data?: IAuthResponseData
       successStatus?: number
       includeUserInResponse?: boolean
     }
@@ -84,7 +89,7 @@ class ApiService {
     }
 
     // Формируем тело ответа
-    const responseBody: Record<string, any> = {}
+    const responseBody: AuthResponseBody = {}
     if (response.data.accessToken) responseBody.accessToken = response.data.accessToken
     if (includeUserInResponse && response.data.user) responseBody.user = response.data.user
 

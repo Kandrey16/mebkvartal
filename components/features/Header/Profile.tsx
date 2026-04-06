@@ -10,14 +10,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { authService } from '@/services/auth.service'
+import { useAuth } from '@/hooks/useAuth'
 import { useAuthStore } from '@/store/auth.store'
 import { useRouter } from 'next/navigation'
 
 export default function Profile() {
   const { isAuth } = useAuthStore()
   const route = useRouter()
-  const logout = authService.logout
+  const { logOut } = useAuth()
 
   return (
     <DropdownMenu>
@@ -50,7 +50,7 @@ export default function Profile() {
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuItem
-              onClick={() => logout()}
+              onClick={() => logOut()}
               variant="destructive"
             >
               Выход

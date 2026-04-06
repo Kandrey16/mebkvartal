@@ -1,4 +1,4 @@
-export interface IApiRequestData {
+export interface IAuthResponseData {
   accessToken: string,
   refreshToken: string,
   user: IApiUser

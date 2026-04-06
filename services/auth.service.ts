@@ -1,50 +1,34 @@
+import $api from '@/lib/apiClient'
+import { IAuthResponseData } from '@/types/api.interface'
+import axios, { AxiosResponse } from 'axios'
+
 class AuthService {
-  async signUp(data: {email: string, password: string}) {
-    const res = await fetch('/api/auth/signUp', {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    })
-    if (!res.ok) throw new Error('Неверный email или пароль')
-
-    return res.json()
-  }
-  
-  async signIn(data: { email: string; password: string }) {
-    const res = await fetch('/api/auth/signIn', {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    })
-    if (!res.ok) throw new Error('Неверный email или пароль')
-
-    return res.json()
+  async signUp(data: {
+    email: string
+    password: string
+  }): Promise<AxiosResponse<IAuthResponseData>> {
+    return $api.post<IAuthResponseData>('/api/auth/signUp', data)
   }
 
-  async refresh() {
-    const res = await fetch('/api/auth/refresh', {
-      method: 'POST',
-      credentials: 'include'
-    })
-
-    if (!res.ok) {
-      throw new Error('Ошибка обновления')
-    }
-
-    return res.json()
+  async signIn(data: {
+    email: string
+    password: string
+  }): Promise<AxiosResponse<IAuthResponseData>> {
+    return $api.post<IAuthResponseData>('/api/auth/signIn', data)
   }
 
-  async logout() {
-    const res = await fetch('/api/auth/logout', {
-      method: 'POST',
-      credentials: 'include'
-    })
+  async logout(): Promise<void> {
+    return $api.post('/api/auth/logout')
+  }
 
-    if (!res.ok) throw new Error('Ошибка выхода')
-
-    return res.json()
+  async refresh(): Promise<AxiosResponse<IAuthResponseData>> {
+    const response = await axios.get<IAuthResponseData>(
+      `${process.env.NEXT_PUBLIC_CLIENT_API}/refresh`,
+      {
+        withCredentials: true
+      }
+    )
+    return response
   }
 }
 

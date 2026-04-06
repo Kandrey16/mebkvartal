@@ -12,6 +12,7 @@ import Link from 'next/link'
 export default function SignInPage() {
   const router = useRouter()
   const { login } = useAuthStore()
+
   const {
     register,
     handleSubmit,
@@ -23,8 +24,10 @@ export default function SignInPage() {
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      const res = await authService.signIn(data)
-      login(res.accessToken, res.user)
+      const response = await authService.signIn(data)
+      const { accessToken, user } = response.data
+
+      login(accessToken, user)
       router.push('/')
     } catch {
       setError('root', {

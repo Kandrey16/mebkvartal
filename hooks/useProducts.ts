@@ -8,6 +8,7 @@ export function useProducts() {
 
   const products = useMemo<IProduct[]>(() => {
     if (!data?.products?.items) return []
+    console.log('data', data)
 
     return data.products.items.map(product => {
       const productImages = product.productImages || []

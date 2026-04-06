@@ -23,8 +23,9 @@ export default function SignUpPage() {
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      const res = await authService.signUp(data)
-      registration(res.accessToken, res.user)
+      const response = await authService.signUp(data)
+      const { accessToken, user } = response.data
+      registration(accessToken, user)
       router.push('/')
     } catch {
       setError('root', {

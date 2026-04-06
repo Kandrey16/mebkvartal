@@ -1,32 +1,17 @@
 'use client'
 
-import { authService } from '@/services/auth.service'
+import { useAuth } from '@/hooks/useAuth'
 import { useAuthStore } from '@/store/auth.store'
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const login = useAuthStore(state => state.login)
-  const logout = useAuthStore(state => state.logout)
-  const setLoading = useAuthStore(state => state.setLoading)
-
-  const initialized = useRef(false)
+  const { accessToken } = useAuthStore()
+  const { checkAuth } = useAuth()
 
   useEffect(() => {
-    if (initialized.current) return
-    initialized.current = true
-    
-    const refreshAuth = async () => {
-      try {
-        const data = await authService.refresh()
-        login(data.accessToken, data.user)
-      } catch {
-        logout()
-      } finally {
-        setLoading(false)
-      }
+    if (accessToken) {
+      checkAuth()
     }
-    refreshAuth()
   }, [])
-
   return children
 }
